@@ -1,0 +1,60 @@
+<!doctype html>
+<html lang="pt">
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+        <title>Quickie | WASD</title>
+
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="css/main.css">
+    </head>
+    <body>
+
+        <div class="quickie" id="quickie"> 
+            <img class="bg" src="#" />
+            <div class="layers">
+              <img class="logo" data-horizontal-align="right" data-vertical-align="top" src="https://www.wasd.pt/CDN/wasd-icon.png" /> 
+              <div class="text bottom-left">
+                <p contenteditable="true"></p>
+              </div>
+            </div>
+          </div>
+          
+          <div class="tools">
+            <div class="alignment">
+              <label>Alinhamento do texto:</label>
+              <div class="border">
+                <div>
+                  <input type="radio" class="tl" value="top-left" name="alignment" />
+                  <input type="radio" class="tr "value="top-right" name="alignment"  />
+                </div>
+                <div>
+                  <input type="radio" class="bl" value="bottom-left" name="alignment" checked="checked"  />
+                  <input type="radio" class="br" value="bottom-right" name="alignment"  />
+                </div>
+              </div>
+            </div>
+            
+            <div class="background">
+              <label>Saturação:</label>
+              <input type="range" min="0" max="2" step=".1" value="1" id="saturation" />
+              <label>Contraste:</label>
+              <input type="range" min="0.5" max="1.5" step=".1" value="1" id="contrast" />
+              <label>Brilho:</label>
+              <input type="range" min="0.5" max="1.5" step=".1" value="1" id="brightness" />
+              <label>Blur:</label>
+              <input type="range" min="0" max="5" step=".1" value="0" id="blur" />
+            </div>
+            
+            <input type="button" id="btnSave" value="Save JPG"/>
+          
+          </div>
+          
+          
+          
+          <div id="img-out"></div>
+
+        <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+        <script src="js/main.js"></script>
+    </body>
+</html>

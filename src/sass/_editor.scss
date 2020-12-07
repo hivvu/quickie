@@ -1,0 +1,125 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu:ital,wght@0,500;1,500&display=swap');
+
+:root{
+  // Default options
+  --saturation: 1;
+  --contrast: 1;
+  --brightness: 1;
+  --blur: 0;
+}
+
+body{
+  margin: 0;
+  background: lightBlue;
+}
+
+.quickie{
+  background: #fdfdfd;
+  position: relative; 
+  height: calc(1080px/2);
+  width: calc(1080px/2);
+  margin-bottom: 20px;
+  
+  .bg{
+    // max-height: calc(1080px/2);
+    max-width: calc(1080px/2);
+    position: absolute;
+    z-index: 0;
+    display: block;
+    
+    filter: saturate(calc(var(--saturation) * 100%))
+            contrast(var(--contrast))
+            brightness(var(--brightness))
+            blur(calc(var(--blur) * 1px));
+  }
+  
+  .layers{
+    position: absolute;
+    height: calc(1080px/2 - 40px);
+    width: calc(1080px/2 - 40px);
+    top: 20px; 
+    left: 20px;
+  }
+  
+  .logo{
+    display: inline-block;
+    width: 50px;
+    position: absolute;
+    z-index: 10;
+    opacity: .8;    
+    
+    &[data-vertical-align="top"]{
+      top: 0;
+    }
+    &[data-vertical-align="bottom"]{
+      bottom: 0;
+    }
+    &[data-horizontal-align="left"]{
+      left: 0;
+    }
+    &[data-horizontal-align="right"]{
+      right: 0;
+    }
+  }
+    
+  .text{
+    position: absolute;
+    z-index: 10;    
+    text-transform: uppercase;
+    color: #fff;
+    font-family: 'Ubuntu', sans-serif;
+    font-size: 24px;
+    line-height: 42px;
+    width: 90%;
+    left: 0;
+    
+    &.top-left{
+      top: 0;
+    }
+    &.top-right{
+      top: 0;
+      text-align: right;
+    }
+    &.bottom-left{
+      bottom: 0;
+    }
+    &.bottom-right{
+      bottom: 0;
+      text-align: right;
+    }
+  }
+  
+  p{
+    display: inline;
+	  padding: 4px 0;
+	  position: relative;
+    left: 10px;
+    box-shadow: 10px 0 0 #0057c1, -10px 0 0 #0a0200;
+    -webkit-background-clip: background;
+    background: linear-gradient(-90deg, #0057c1, #0a0200); 
+    // background: red;
+    
+    box-decoration-break: clone;
+    -webkit-box-decoration-break: clone;
+  }
+}
+
+.tools{
+  & > div{
+    margin-bottom: 20px;
+  }
+  
+  label {
+    display: block; 
+    font-family: 'Ubuntu', sans-serif;
+    margin-bottom: 10px;
+  }
+  
+  .border{
+    border: 1px dashed #ccc;
+    display: inline-block;
+    padding: 5px;    
+  }
+  
+
+}
