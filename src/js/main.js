@@ -1,10 +1,12 @@
-var config = {
-  'text': 'Mudrunner é a mais recente oferta da Epic Games Store. Disponível até dia 3 de Dezembro',
-  'alignment': 'bottom-left',
-  'image': {
-    'url': 'https://image.api.playstation.com/cdn/EP4133/CUSA09958_00/rE7MA0VJfBTydDSJCh8EfKYbTnSSoKJT.png'
-  }
-}
+var quickie;
+// OBJECT EXAMPLE
+// var quickie = {
+//   'text': 'Mudrunner é a mais recente oferta da Epic Games Store. Disponível até dia 3 de Dezembro',
+//   'alignment': 'bottom-left',
+//   'image': {
+//     'url': 'https://image.api.playstation.com/cdn/EP4133/CUSA09958_00/rE7MA0VJfBTydDSJCh8EfKYbTnSSoKJT.png'
+//   }
+// }
 
 var defaultOpts = {
   'text': '',
@@ -18,32 +20,41 @@ var defaultOpts = {
   }
 }
 
+function showLoading() {
+  console.log('started');
+}
 
-// -------- LOAD 
+function load(config){
 
-$('.bg').attr('src', config.image.url ? config.image.url : defaultOpts.image.url);
-$('.text p').text(config.text);
+  if (localStorage.getItem('quickie')){
+    var savedConfig = localStorage.getItem('quickie');
+    quickie = config = JSON.parse(savedConfig);
+  }
 
-$(':root').css('--saturation', config.image.saturation ? config.image.saturation : defaultOpts.image.saturation);
-$(':root').css('--contrast', config.image.contrast ? config.image.contrast : defaultOpts.image.contrast);
-$(':root').css('--brightness', config.image.brightness ? config.image.brightness : defaultOpts.image.brightness);
-$(':root').css('--blur', config.image.blur ? config.image.blur : defaultOpts.image.blur);
-
-var alignment = config.alignment ? config.alignment : defaultOpts.alignment;
-$('.text').attr('class', 'text').addClass(alignment);
-alignWatermark(alignment);
-
-
-// -------- TOOLS
-
-$('.alignment input').prop('checked', false);
-$('.alignment input[value="' + alignment + '"]').prop('checked', true);
-
-$('.background #saturation').val(config.image.saturation ? config.image.saturation : defaultOpts.image.saturation);
-$('.background #contrast').val(config.image.contrast ? config.image.contrast : defaultOpts.image.contrast);
-$('.background #brightness').val(config.image.brightness ? config.image.brightness : defaultOpts.image.brightness);
-$('.background #blur').val(config.image.blur ? config.image.blur : defaultOpts.image.blur);
-// --------
+  $('.bg').attr('src', config.image.url ? config.image.url : defaultOpts.image.url);
+  $('.text p').text(config.text);
+  
+  $(':root').css('--saturation', config.image.saturation ? config.image.saturation : defaultOpts.image.saturation);
+  $(':root').css('--contrast', config.image.contrast ? config.image.contrast : defaultOpts.image.contrast);
+  $(':root').css('--brightness', config.image.brightness ? config.image.brightness : defaultOpts.image.brightness);
+  $(':root').css('--blur', config.image.blur ? config.image.blur : defaultOpts.image.blur);
+  
+  var alignment = config.alignment ? config.alignment : defaultOpts.alignment;
+  $('.text').attr('class', 'text').addClass(alignment);
+  alignWatermark(alignment);
+  
+  $('.options #text').val(config.text ? config.text : defaultOpts.text);
+  
+  // -------- TOOLS
+  
+  $('.options .alignment input').prop('checked', false);
+  $('.options .alignment input[value="' + alignment + '"]').prop('checked', true);
+  
+  $('.options #saturation').val(config.image.saturation ? config.image.saturation : defaultOpts.image.saturation);
+  $('.options #contrast').val(config.image.contrast ? config.image.contrast : defaultOpts.image.contrast);
+  $('.options #brightness').val(config.image.brightness ? config.image.brightness : defaultOpts.image.brightness);
+  $('.options #blur').val(config.image.blur ? config.image.blur : defaultOpts.image.blur);
+}
 
 function alignWatermark(curTextAlign) {
   if (~curTextAlign.indexOf('top')) {
@@ -59,39 +70,127 @@ function alignWatermark(curTextAlign) {
   }
 }
 
+function save(config){
+  var encodeConfig = JSON.stringify(config);  
+  localStorage.setItem('quickie', encodeConfig);
+}
+
+function notify(string, delay){
+  $('.notification').text(string).fadeIn();
+  setTimeout(function(){
+    $('.notification').fadeOut('fast', function(){ $('this').empty(); });
+  }, delay);  
+}
+
+
+
+// ---- EVENTS
+
+load(quickie);
+
 $('.alignment input').on('click', function () {
   var curTextAlign = $(this).val();
   $('.text').attr('class', 'text').addClass(curTextAlign);
-
+  
+  quickie.alignment = curTextAlign;
   alignWatermark(curTextAlign);
 
 });
 
-$('.background input').on('change', function () {
+$('.options input[type="range"]').on('change', function () {
   $(':root').css('--saturation', $('#saturation').val());
   $(':root').css('--contrast', $('#contrast').val());
   $(':root').css('--brightness', $('#brightness').val());
   $(':root').css('--blur', $('#blur').val());
+
+  quickie.image.saturation = $('#saturation').val();
+  quickie.image.contrast = $('#contrast').val();
+  quickie.image.brightness = $('#brightness').val();
+  quickie.image.blur = $('#blur').val();
 });
 
-
-$('#btnSave').on('click', function () {
-  var curWHeight = $('body').innerHeight();
-
-  console.info('saved');
-
+$('.options #text').on('keydown change', function () {
+  quickie.text = $(this).val();
+  save(quickie);
+  load(quickie); 
 });
 
-function load(curWHeight) {
+$('.options #externalImg').on('change', function () {
+  quickie.image.url = $(this).val();
+  save(quickie);
+  load(quickie); 
+});
 
-  $('.tools').show();
-  $('body, html').innerHeight(curWHeight);
+$('.editor button').on('click', function(e){
+  
+  if ($(this).attr('data-target') != undefined){
+    if ($(this).hasClass('is-active')){
+      $(this).removeClass('is-active');
+      $('.editor').removeClass('open');  
+    } else {
+      $('.editor button').removeClass('is-active');  
+      $(this).addClass('is-active');
+      $('.editor').addClass('open');  
 
-}
+      var target = $(this).data('target');
+      $('.options > div').hide();
+      $('.'+target).show();
+    }
+  } 
+  
+});
 
-function showLoading() {
+$('.fa-save').on('click', function(){
+  notify('Guardado', 2000);
+  save(quickie);
+});
 
+$('.fa-download').on('click', function(){
+  notify('A processar...', 2000);
+});
 
-  console.log('started');
-}
+$('#imageLoader').on('change', function (e) {
 
+  //add image to preview with edit mode on
+  if (this.files && this.files[0]) {
+      var reader = new FileReader();
+
+      reader.onload = function (e) {
+        var img = $('.bg');
+        img.attr('src', e.target.result);
+        // img.appendTo($('.preview'));
+
+          //update object
+          quickie.image.url = e.target.result;
+
+          // if (img.get(0).complete)
+          //     ImageLoaded(img);
+          // else
+          //     img.on('load', function () {
+          //         ImageLoaded(img);
+          //     });
+
+          // _IMAGE_LOADED = 1;
+      }
+
+      reader.readAsDataURL(this.files[0]);
+  }
+});
+
+// CUSTOM UPLOAD BUTTON
+$('.upload').on('click', function () {
+  $('#imageLoader').click();
+});
+
+$('.side-tools button').on('click', function(){
+  if ($(this).hasClass('fa-code')){
+    $('.modal textarea').remove();
+    $('<textarea rows="25">'+JSON.stringify(quickie, undefined, 4)+'</textarea>').appendTo($('.modal-body'));
+  }
+
+  $('.modal').show();
+});
+
+$('.modal .modal-close').on('click', function(){
+  $('.modal').hide();
+});
