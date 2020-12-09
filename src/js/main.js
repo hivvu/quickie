@@ -147,6 +147,19 @@ $('.fa-save').on('click', function(){
 
 $('.fa-download').on('click', function(){
   notify('A processar...', 2000);
+
+  $.ajax({
+    url: "http://localhost:3000", 
+    dataType: 'json',
+    success: function(result){
+      // Adds the result to a hidden href and clicks it to automaticaly download
+      $('.result').attr('download', result[0].title).attr('href', result[0].link);
+      $('.result')[0].click();
+      // setTimeout(function(){
+      //   $('.result').click();
+      // }, 1000);
+    }
+  });
 });
 
 $('#imageLoader').on('change', function (e) {
