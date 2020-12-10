@@ -20,8 +20,14 @@ var defaultOpts = {
   }
 }
 
-function showLoading() {
-  console.log('started');
+function loading() {
+  // console.log('started');
+  if (!$('.loading').length){
+    $('<div class="loading"><i class="fa fa-cog"></i><span>A processar imagem...</span></div>').appendTo($('body'));
+  } else {
+    $('.loading').remove();
+  }
+  
 }
 
 function load(config){
@@ -160,7 +166,8 @@ $('.fa-save').on('click', function(){
 });
 
 $('.fa-download').on('click', function(){
-  notify('A processar...', 2000);
+
+  loading();
 
   $.ajax({
     url: "http://localhost:3000?data=" + JSON.stringify(quickie),
@@ -172,6 +179,12 @@ $('.fa-download').on('click', function(){
       $('.result').attr('download', result[0].title + '.jpg').attr('href', result[0].link);
       // trigger the click
       $('.result')[0].click();
+      
+      loading();
+    }, 
+    error: function(){
+      loading();
+      notify('Ocorreu um erro', 2000);
     }
   });
 });
