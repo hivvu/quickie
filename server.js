@@ -8,10 +8,14 @@ app.use(cors())
 
 app.get('/', (req, res) => {
   const quickie = new Promise((resolve, reject) => {
+    let data = req.query.data;
+    console.info('Taking screenshot...');
+
     scraper
-      .quickie()
+      .quickie(data)
       .then(data => {
         resolve(data)
+        console.info('Screenshot taken');
       })
       .catch(err => reject('Screenshot failed'))
   })

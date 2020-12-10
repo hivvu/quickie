@@ -9,6 +9,7 @@ body {
 .hidden {
     display: none;
 }
+
 .d-inline-block {
     display: inline-block;
 }
@@ -24,19 +25,26 @@ body {
     left: 0;
     right: 0;
     margin: auto;
-
     box-shadow: 1px 1px 30px rgba(0, 0, 0, 0.5);
 
+    &.full-size{
+        box-shadow: none;
+        zoom: 0;
+        top: 0;
+        margin: 0;
+        height: 1080px;
+        position: absolute;
+    }
+
     .bg {
-        // max-height: calc(1080px/2);
         width: 100%;
-        // max-width: calc(1080px / 2);
         position: absolute;
         z-index: 0;
         display: block;
-
-        filter: saturate(calc(var(--saturation) * 100%)) contrast(var(--contrast)) brightness(var(--brightness))
-            blur(calc(var(--blur) * 1px));
+        filter: saturate(calc(var(--saturation) * 100%)) 
+                contrast(var(--contrast)) 
+                brightness(var(--brightness))
+                blur(calc(var(--blur) * 1px));
     }
 
     .layers {
@@ -103,7 +111,6 @@ body {
         box-shadow: 20px 0 0 #013e88, -20px 0 0 #059bff;
         -webkit-background-clip: background;
         background: linear-gradient(-90deg, #013e88, #059bff); 
-        
         box-decoration-break: clone;
         -webkit-box-decoration-break: clone;
       }

@@ -26,7 +26,9 @@ function showLoading() {
 
 function load(config){
 
-  if (localStorage.getItem('quickie')){
+  if (getUrlParameter('data') != undefined){
+    config = JSON.parse(getUrlParameter('data'));
+  } else if (localStorage.getItem('quickie')){
     var savedConfig = localStorage.getItem('quickie');
     quickie = config = JSON.parse(savedConfig);
   }
@@ -82,7 +84,19 @@ function notify(string, delay){
   }, delay);  
 }
 
+function getUrlParameter(sParam) {
+  var sPageURL = window.location.search.substring(1),
+    sURLVariables = sPageURL.split('&'),
+    sParameterName;
 
+  for (var i = 0; i < sURLVariables.length; i++) {
+    sParameterName = sURLVariables[i].split('=');
+
+    if (sParameterName[0] === sParam) {
+      return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+    }
+  }
+}
 
 // ---- EVENTS
 
@@ -149,15 +163,15 @@ $('.fa-download').on('click', function(){
   notify('A processar...', 2000);
 
   $.ajax({
-    url: "http://localhost:3000", 
+    url: "http://localhost:3000?data=" + JSON.stringify(quickie),
     dataType: 'json',
+    contentType: 'application/json; charset=utf-8',
+    crossDomain: true,
     success: function(result){
       // Adds the result to a hidden href and clicks it to automaticaly download
-      $('.result').attr('download', result[0].title).attr('href', result[0].link);
+      $('.result').attr('download', result[0].title + '.jpg').attr('href', result[0].link);
+      // trigger the click
       $('.result')[0].click();
-      // setTimeout(function(){
-      //   $('.result').click();
-      // }, 1000);
     }
   });
 });
