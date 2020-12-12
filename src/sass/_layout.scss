@@ -155,12 +155,9 @@ body {
         padding-bottom: 10px;
         border-bottom: 4px solid transparent;
 
+        &:hover,
         &.is-active {
             border-bottom: 4px solid #fff;
-        }
-
-        &:hover {
-            text-shadow: -5px 5px 8px rgba(0, 0, 0, 0.3);
         }
     }
 

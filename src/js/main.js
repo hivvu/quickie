@@ -152,13 +152,13 @@ $('.options input[type="range"]').on('change', function () {
   generateQuickie(quickie);
 });
 
-$('.options #text').on('keydown change', function () {
+$('.options #text').on('keyup', function () {
   quickie.text = $(this).val();
   save(quickie);
   generateQuickie(quickie);
 });
 
-$('.options #externalImg').on('change', function () {
+$('.options #externalImg').on('keyup', function () {
   quickie.image.url = $(this).val();
   save(quickie);
   generateQuickie(quickie);
