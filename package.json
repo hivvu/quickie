@@ -4,6 +4,7 @@
   "description": "Generator tool for WASD.pt",
   "main": "gulpfile.js",
   "dependencies": {
+    "body-parser": "^1.19.0",
     "gulp": "^3.9.1"
   },
   "devDependencies": {

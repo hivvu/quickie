@@ -167,6 +167,7 @@ body {
     .upload{
         border: 1px solid #fff;
         padding: 7px 10px 7px;
+        font-family: Verdana, sans-serif;
     }
 
     .options {
@@ -188,7 +189,7 @@ body {
 input[type="text"] {
     padding: 5px 8px;
     outline: none;
-    font-family: verdana;
+    font-family: Verdana, sans-serif;
     color: #000;
 }
 
@@ -200,7 +201,7 @@ input[type="text"] {
     right: 20px;
     padding: 20px 30px;
     color: #fff;
-    font-family: verdana;
+    font-family: Verdana, sans-serif;
     display: none;
 }
 
@@ -354,4 +355,8 @@ textarea{
         -o-transform: rotate(360deg);
         transform: rotate(360deg);
     }
+}
+
+#__bs_notify__{
+    display: none!important;
 }

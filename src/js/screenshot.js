@@ -5,10 +5,8 @@ const quickie = async (data) => {
   const page = await browser.newPage()
   
   await page.setViewport({ width: 1080, height: 1080 });
-  await page.goto('http://localhost:8080/preview.html?data='+data)
+  await page.goto('http://localhost:3000/preview?data='+JSON.stringify(data))
     
-  console.log(data)
-
   const image = await page.screenshot({
     fullPage: true,
     type: "jpeg",
@@ -16,12 +14,11 @@ const quickie = async (data) => {
   });
 
   var imgArr = {
-    title: "quickie",
-    link: 'data:image/png;base64,' + image.toString("base64")
+    title: data.filename + '.jpg',
+    link: 'data:image/jpg;base64,' + image.toString("base64")
   };
 
   await page.close();
-  await browser.close();
 
   return imgArr;
 } 

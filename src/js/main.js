@@ -1,12 +1,14 @@
-var quickie;
-// OBJECT EXAMPLE
-// var quickie = {
-//   'text': 'Mudrunner é a mais recente oferta da Epic Games Store. Disponível até dia 3 de Dezembro',
-//   'alignment': 'bottom-left',
-//   'image': {
-//     'url': 'https://image.api.playstation.com/cdn/EP4133/CUSA09958_00/rE7MA0VJfBTydDSJCh8EfKYbTnSSoKJT.png'
-//   }
-// }
+var quickie = {
+  'text': '',
+  'alignment': 'bottom-left',
+  'image': {
+    'url': '//placehold.it/1080x1080/ccc/222?text=Falta+o+URL+da+imagem',
+    'saturation': 1,
+    'contrast': 1,
+    'brightness': 1,
+    'blur': 0
+  }
+}
 
 var defaultOpts = {
   'text': '',
@@ -21,47 +23,65 @@ var defaultOpts = {
 }
 
 function loading() {
-  // console.log('started');
   if (!$('.loading').length){
     $('<div class="loading"><i class="fa fa-cog"></i><span>A processar imagem...</span></div>').appendTo($('body'));
   } else {
     $('.loading').remove();
   }
-  
 }
 
-function load(config){
-
+function load(){
   if (getUrlParameter('data') != undefined){
-    config = JSON.parse(getUrlParameter('data'));
-  } else if (localStorage.getItem('quickie')){
-    var savedConfig = localStorage.getItem('quickie');
-    quickie = config = JSON.parse(savedConfig);
-  }
+    var data = JSON.parse(getUrlParameter('data'));
+    var url = 'archive/' + data.year  + '-' + data.month + '/' + data.filename + '.json';
+    
+    console.info('Quickie loaded from file: /archive/' + data.year  + '-' + data.month + '/' + data.filename + '.json');
 
-  $('.bg').attr('src', config.image.url ? config.image.url : defaultOpts.image.url);
-  $('.text p').text(config.text);
+    $.ajax({
+      type: "GET",
+      url: url,
+      success: function(result){
+        generateQuickie(result);
+      }, 
+      error: function(){
+        notify('Ocorreu um erro', 2000);
+      }
+    });
+
+  } else if (localStorage.getItem('quickie')){
+    console.info('Quickie loaded from localStorage');
+    var savedConfig = localStorage.getItem('quickie');
+    quickie = JSON.parse(savedConfig);
+    generateQuickie(quickie);
+
+  } else {
+    console.info('Quickie loaded from default options');
+    generateQuickie(defaultOpts);
+  }
+}
+
+function generateQuickie(json){
+  $('.bg').attr('src', json.image.url ? json.image.url : defaultOpts.image.url);
+  $('.text p').text(json.text);
   
-  $(':root').css('--saturation', config.image.saturation ? config.image.saturation : defaultOpts.image.saturation);
-  $(':root').css('--contrast', config.image.contrast ? config.image.contrast : defaultOpts.image.contrast);
-  $(':root').css('--brightness', config.image.brightness ? config.image.brightness : defaultOpts.image.brightness);
-  $(':root').css('--blur', config.image.blur ? config.image.blur : defaultOpts.image.blur);
+  $(':root').css('--saturation', json.image.saturation ? json.image.saturation : defaultOpts.image.saturation);
+  $(':root').css('--contrast', json.image.contrast ? json.image.contrast : defaultOpts.image.contrast);
+  $(':root').css('--brightness', json.image.brightness ? json.image.brightness : defaultOpts.image.brightness);
+  $(':root').css('--blur', json.image.blur ? json.image.blur : defaultOpts.image.blur);
   
-  var alignment = config.alignment ? config.alignment : defaultOpts.alignment;
+  var alignment = json.alignment ? json.alignment : defaultOpts.alignment;
   $('.text').attr('class', 'text').addClass(alignment);
   alignWatermark(alignment);
   
-  $('.options #text').val(config.text ? config.text : defaultOpts.text);
-  
-  // -------- TOOLS
+  $('.options #text').val(json.text ? json.text : defaultOpts.text);
   
   $('.options .alignment input').prop('checked', false);
   $('.options .alignment input[value="' + alignment + '"]').prop('checked', true);
   
-  $('.options #saturation').val(config.image.saturation ? config.image.saturation : defaultOpts.image.saturation);
-  $('.options #contrast').val(config.image.contrast ? config.image.contrast : defaultOpts.image.contrast);
-  $('.options #brightness').val(config.image.brightness ? config.image.brightness : defaultOpts.image.brightness);
-  $('.options #blur').val(config.image.blur ? config.image.blur : defaultOpts.image.blur);
+  $('.options #saturation').val(json.image.saturation ? json.image.saturation : defaultOpts.image.saturation);
+  $('.options #contrast').val(json.image.contrast ? json.image.contrast : defaultOpts.image.contrast);
+  $('.options #brightness').val(json.image.brightness ? json.image.brightness : defaultOpts.image.brightness);
+  $('.options #blur').val(json.image.blur ? json.image.blur : defaultOpts.image.blur);
 }
 
 function alignWatermark(curTextAlign) {
@@ -85,6 +105,7 @@ function save(config){
 
 function notify(string, delay){
   $('.notification').text(string).fadeIn();
+
   setTimeout(function(){
     $('.notification').fadeOut('fast', function(){ $('this').empty(); });
   }, delay);  
@@ -106,7 +127,7 @@ function getUrlParameter(sParam) {
 
 // ---- EVENTS
 
-load(quickie);
+load();
 
 $('.alignment input').on('click', function () {
   var curTextAlign = $(this).val();
@@ -127,18 +148,20 @@ $('.options input[type="range"]').on('change', function () {
   quickie.image.contrast = $('#contrast').val();
   quickie.image.brightness = $('#brightness').val();
   quickie.image.blur = $('#blur').val();
+
+  generateQuickie(quickie);
 });
 
 $('.options #text').on('keydown change', function () {
   quickie.text = $(this).val();
   save(quickie);
-  load(quickie); 
+  generateQuickie(quickie);
 });
 
 $('.options #externalImg').on('change', function () {
   quickie.image.url = $(this).val();
   save(quickie);
-  load(quickie); 
+  generateQuickie(quickie);
 });
 
 $('.editor button').on('click', function(e){
@@ -168,15 +191,19 @@ $('.fa-save').on('click', function(){
 $('.fa-download').on('click', function(){
 
   loading();
+  
+  save(quickie);
 
   $.ajax({
-    url: "http://localhost:3000?data=" + JSON.stringify(quickie),
-    dataType: 'json',
+    type: "POST",
+    data: JSON.stringify(quickie),
+    url: "/save",
     contentType: 'application/json; charset=utf-8',
     crossDomain: true,
     success: function(result){
       // Adds the result to a hidden href and clicks it to automaticaly download
-      $('.result').attr('download', result[0].title + '.jpg').attr('href', result[0].link);
+      $('.result').attr('download', result[0].title).attr('href', result[0].link);
+    
       // trigger the click
       $('.result')[0].click();
       

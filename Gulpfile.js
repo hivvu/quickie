@@ -44,10 +44,10 @@ gulp.task('build:css', function() {
 // Static Server + watching scss/html files
 gulp.task('serve', ['build:css'], function() {
 
-    browserSync.init({
-        server: "./src/",
-        port: 8080
-    });
+    // browserSync.init({
+    //     server: "./src/",
+    //     port: 8080
+    // });
 
     gulp.watch('./src/sass/{,*/}*.{scss,sass}', ['build:css']);
     gulp.watch("./src/*.html").on('change', browserSync.reload);
