@@ -4,6 +4,7 @@ const router = express.Router();
 const screenshot = require('./src/js/screenshot')
 const cors = require('cors')
 const fs = require('fs');
+const path = require('path');
 
 const app = express()
 
@@ -68,6 +69,51 @@ router.get('/',(req, res) => {
 router.get('/preview',(req, res) => {
   res.sendFile("preview.html", { root: 'src' });
 });
+
+// router.get('/archive',(req, res) => {
+//   res.sendFile("archive.html", { root: 'src' });
+// });
+
+// router.get('/read-archive',(req, res) => {
+//   var dir = require('node-dir');
+//   var allFiles;
+
+//   // dir.readFiles(__dirname + '/archive',
+//   //   function(err, content, next) {
+//   //       if (err) throw err;
+        
+//   //       console.log();
+
+//   //       // console.log('content:', content);  // get content of files
+//   //       next();
+//   //   },
+//   //   function(err, files){
+//   //       if (err) throw err;
+                
+//   //       allFiles = JSON.stringify(files.reverse());
+//   //       console.log('finished reading files:\n', allFiles); // get filepath 
+//   //   });  
+
+
+//     // dir.files(__dirname + '/archive', function(err, files) {
+//     //     if (err) throw err;
+        
+//     //     allFiles = JSON.stringify(files.reverse());
+//     //     console.log(files);
+//     // });
+
+    
+//     //GET FOLDERS
+//     const testFolder = __dirname + '/archive';
+//     const fs = require('fs');
+
+//     fs.readdirSync(testFolder).forEach(file => {
+//       console.log(file);
+//     });
+
+//     return res.status(200).send(allFiles)
+// });
+
 
 app.listen(3000,() => {
   console.log('server up and running at port: %s', port);
