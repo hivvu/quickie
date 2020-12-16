@@ -15,7 +15,8 @@ body {
 }
 
 .preview {
-    zoom: calc((100% / 160) * 100);
+    // zoom: calc((var(--zoom-size) / 160) * 100);
+    zoom: 0.8;
     pointer-events: none;
     max-width: 1080px;
     max-height: 1080px;
@@ -49,7 +50,8 @@ body {
 
     .layers {
         position: absolute;
-        width: 1000px;
+        width: 100%;
+        max-width: 1000px;
         height: 1000px; // WIP
         top: 40px;
         left: 40px;
@@ -116,6 +118,15 @@ body {
       }
 }
 
+
+@media (max-width: 500px){
+    .preview {
+        zoom: 0.35;
+    }
+}
+
+
+
 .editor {
     background: rgba(0, 0, 0, 0.8);
     color: #fff;
@@ -126,6 +137,7 @@ body {
     text-align: center;
     transition: transform 0.2s ease-in-out;
     transform: translateY(50%);
+    z-index: 80;
 
     .btn-secondary {
         border-radius: 2px;
@@ -151,7 +163,7 @@ body {
         cursor: pointer;
         color: #fff;
         outline: none;
-        margin: 0 5px;
+        margin: 0 3px;
         padding-bottom: 10px;
         border-bottom: 4px solid transparent;
 

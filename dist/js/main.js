@@ -2,7 +2,7 @@ var quickie = {
   'text': '',
   'alignment': 'bottom-left',
   'image': {
-    'url': '//placehold.it/1080x1080/ccc/222?text=Adicionar+um+URL+ou+fazer+upload+de+imagem',
+    'url': '//placehold.it/1080x1080/ccc/222?text=Falta+o+URL+da+imagem',
     'saturation': 1,
     'contrast': 1,
     'brightness': 1,
@@ -14,7 +14,7 @@ var defaultOpts = {
   'text': '',
   'alignment': 'bottom-left',
   'image': {
-    'url': '//placehold.it/1080x1080/ccc/222?text=Adicionar+um+URL+ou+fazer+upload+de+imagem',
+    'url': '//placehold.it/1080x1080/ccc/222?text=Falta+o+URL+da+imagem',
     'saturation': 1,
     'contrast': 1,
     'brightness': 1,

@@ -1,10 +1,7 @@
 const puppeteer = require('puppeteer')
 
 const quickie = async (data) => {
-  const browser = await puppeteer.launch({
-    headless: true,
-    args: ['--no-sandbox']
-  })
+  const browser = await puppeteer.launch()
   const page = await browser.newPage()
   
   await page.setViewport({ width: 1080, height: 1080 });

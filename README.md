@@ -26,3 +26,4 @@ $ gulp build:dist // moves processed files from src/ to dist/
 - Connection with other API to create quickies, for example when its a game birthday
 - Post directly to Instagram from editor mode
 - Give more options to different layouts (Quote, VG Birthday, Giveaway)
+- Maybe a app version with Electron 
