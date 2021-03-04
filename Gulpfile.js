@@ -11,10 +11,10 @@ var gulp = require('gulp'),
 
 // var listing of files for dist build
 var filesToDist = [
-    './src/*.html',
-    './src/css/**/*.*',
-    './src/images/**/*.*',
-    './src/js//**/*.js'
+    './public/*.html',
+    './public/css/**/*.*',
+    './public/images/**/*.*',
+    './public/js//**/*.js'
 ];
 
 // Use for stand-alone autoprefixer
@@ -26,7 +26,7 @@ var postcss = require('gulp-postcss'),
 
 // Gulp task when using gulp-autoprefixer as a standalone process
 gulp.task('build:css', function() {
-    gulp.src('./src/sass/{,*/}*.{scss,sass}')
+    gulp.src('./public/sass/{,*/}*.{scss,sass}')
         .pipe(sourcemaps.init())
         .pipe(sass({
         errLogToConsole: true,
@@ -37,7 +37,7 @@ gulp.task('build:css', function() {
         cascade: false
     }))
         .pipe(sourcemaps.write('.'))
-        .pipe(gulp.dest('./src/css'))
+        .pipe(gulp.dest('./public/css'))
         .pipe(reload({stream: true}));
 });
 
@@ -45,17 +45,17 @@ gulp.task('build:css', function() {
 gulp.task('serve', ['build:css'], function() {
 
     // browserSync.init({
-    //     server: "./src/",
+    //     server: "./public/",
     //     port: 8080
     // });
 
-    gulp.watch('./src/sass/{,*/}*.{scss,sass}', ['build:css']);
-    gulp.watch("./src/*.html").on('change', browserSync.reload);
+    gulp.watch('./public/sass/{,*/}*.{scss,sass}', ['build:css']);
+    gulp.watch("./public/*.html").on('change', browserSync.reload);
 });
 
 // Sass watcher
 gulp.task('sass:watch', function() {
-    gulp.watch('./src/sass/{,*/}*.{scss,sass}', ['build:css'])
+    gulp.watch('./public/sass/{,*/}*.{scss,sass}', ['build:css'])
 });
 
 // resource cleaning task
@@ -69,7 +69,7 @@ gulp.task('clean', function(){
 gulp.task('build:dist',['clean'], function(){
   // the base option sets the relative root for the set of files,
   // preserving the folder structure
-  gulp.src(filesToDist, { base: './src/' })
+  gulp.src(filesToDist, { base: './public/' })
   .pipe(gulp.dest('dist'));
 });
 

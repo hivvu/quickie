@@ -1,47 +1,40 @@
 var quickie = {
-  'text': '',
-  'alignment': 'bottom-left',
-  'image': {
-    'url': '//placehold.it/1080x1080/ccc/222?text=Adicionar+um+URL+ou+fazer+upload+de+imagem',
-    'saturation': 1,
-    'contrast': 1,
-    'brightness': 1,
-    'blur': 0
+  "text": "",
+  "alignment": "bottom-left",
+  "image": {
+    "url": "/static/img/no-image.png",
+    "saturation": 1,
+    "contrast": 1,
+    "brightness": 1,
+    "blur": 0
   }
 }
 
 var defaultOpts = {
-  'text': '',
-  'alignment': 'bottom-left',
-  'image': {
-    'url': '//placehold.it/1080x1080/ccc/222?text=Adicionar+um+URL+ou+fazer+upload+de+imagem',
-    'saturation': 1,
-    'contrast': 1,
-    'brightness': 1,
-    'blur': 0
+  "text": "",
+  "alignment": "bottom-left",
+  "image": {
+    "url": "/static/img/no-image.png",
+    "saturation": 1,
+    "contrast": 1,
+    "brightness": 1,
+    "blur": 0
   }
 }
 
-function loading() {
-  if (!$('.loading').length){
-    $('<div class="loading"><i class="fa fa-cog"></i><span>A processar imagem...</span></div>').appendTo($('body'));
-  } else {
-    $('.loading').remove();
-  }
-}
 
 function load(){
-  if (getUrlParameter('data') != undefined){
-    var data = JSON.parse(getUrlParameter('data'));
-    var url = 'archive/' + data.year  + '-' + data.month + '/' + data.filename + '.json';
-    
-    console.info('Quickie loaded from file: /archive/' + data.year  + '-' + data.month + '/' + data.filename + '.json');
 
+  if (window.location.pathname.includes('id')){
+    // Usally the id itself is the last text in the url. This reg ex gets the text after the last slash
+    var id = window.location.pathname.match(/\/([^\/]+)\/?$/)[1];
+    
     $.ajax({
       type: "GET",
-      url: url,
+      url: '/load/' + id,
       success: function(result){
-        generateQuickie(result);
+        quickie = JSON.parse(result);
+        generateQuickie(quickie);
       }, 
       error: function(){
         notify('Ocorreu um erro', 2000);
@@ -84,50 +77,108 @@ function generateQuickie(json){
   $('.options #blur').val(json.image.blur ? json.image.blur : defaultOpts.image.blur);
 }
 
-function alignWatermark(curTextAlign) {
-  if (~curTextAlign.indexOf('top')) {
-    $('.logo').attr('data-vertical-align', 'bottom');
-  } else if (~curTextAlign.indexOf('bottom')) {
-    $('.logo').attr('data-vertical-align', 'top');
+// Save quickie locally
+function saveLocally(config){
+  localStorage.setItem('quickie', JSON.stringify(config));
+}
+
+function save(config, reload){
+  copyLink = (typeof copyLink !== 'undefined') ? copyLink : false
+  
+
+  var quickieId;
+  //Add creation date to quickie obj
+  config.created = Date.now();
+
+  // If quickie id is present, update quickie. 
+  // Else create a new quickie 
+  if (window.location.pathname.length > 1){
+    // Usally the id itself is the last text in the url. This reg ex gets the text after the last slash
+    var uniqueId = window.location.pathname.match(/\/([^\/]+)\/?$/)[1];
+    reload = false;
+  } else {
+    var uniqueId = Math.random().toString(36).substr(2, 9);
   }
 
-  if (~curTextAlign.indexOf('left')) {
-    $('.logo').attr('data-horizontal-align', 'right');
-  } else if (~curTextAlign.indexOf('right')) {
-    $('.logo').attr('data-horizontal-align', 'left');
-  }
-}
 
-function save(config){
-  var encodeConfig = JSON.stringify(config);  
-  localStorage.setItem('quickie', encodeConfig);
-}
+  // Save it on the server
+  $.ajax({
+    type: "POST",
+    data: config,
+    async: false,
+    url: '/save/' + uniqueId,
+    success: function(result){
+      notify('Guardado', 2000);
+    
+      saveLocally(config);
 
-function notify(string, delay){
-  $('.notification').text(string).fadeIn();
-
-  setTimeout(function(){
-    $('.notification').fadeOut('fast', function(){ $('this').empty(); });
-  }, delay);  
-}
-
-function getUrlParameter(sParam) {
-  var sPageURL = window.location.search.substring(1),
-    sURLVariables = sPageURL.split('&'),
-    sParameterName;
-
-  for (var i = 0; i < sURLVariables.length; i++) {
-    sParameterName = sURLVariables[i].split('=');
-
-    if (sParameterName[0] === sParam) {
-      return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+      if (reload){
+        setTimeout(function(){
+          window.location.href = '/id/' + result.id;
+        }, 2100);
+      }
+      
+      quickieId = result.id;
+      
+    },
+    complete: function(){
+      return quickieId;
+    }, 
+    error: function(){
+      notify('Ocorreu um erro', 2000);
     }
-  }
+  });
+
 }
+
+
+
 
 // ---- EVENTS
 
 load();
+
+if (localStorage.getItem('quickieZoom')){
+  $(':root').css('--zoom', localStorage.getItem('quickieZoom'));
+}
+
+$('.js-zoom-out').on('click', function () {
+    var curZoom = parseFloat($(':root').css('--zoom').trim());
+
+    if (curZoom > 0.4){
+      var newZoom = curZoom - .1;
+      $(':root').css('--zoom', newZoom);
+      localStorage.setItem('quickieZoom', newZoom);
+    }
+});
+
+$('.js-zoom-in').on('click', function () {
+  var curZoom = parseFloat($(':root').css('--zoom').trim());
+
+  if (curZoom < 0.9){
+    var newZoom = curZoom + .1;
+    $(':root').css('--zoom', newZoom);
+    localStorage.setItem('quickieZoom', newZoom);
+  }
+});
+
+
+$('.side-options .js-share-quickie').on('click', function () {
+
+  if ((quickie.text != '' && quickie.image.url.indexOf('no-image') != -1) || window.location.pathname.length > 1){
+    var quickieId = window.location.pathname.match(/\/([^\/]+)\/?$/)[1];
+    var quickieLink = window.location.protocol + '//' + window.location.host + '/id/' + quickieId;
+    copyToClipboard(quickieLink);
+  } else {
+    notify('É preciso gravar primeiro', 1500);
+  }
+  
+});
+
+$('.js-new-quickie').on('click', function () {
+  localStorage.removeItem('quickie');
+  window.location.href = '/';
+});
 
 $('.alignment input').on('click', function () {
   var curTextAlign = $(this).val();
@@ -154,26 +205,26 @@ $('.options input[type="range"]').on('change', function () {
 
 $('.options #text').on('keyup', function () {
   quickie.text = $(this).val();
-  save(quickie);
+  saveLocally(quickie);
   generateQuickie(quickie);
 });
 
 $('.options #externalImg').on('keyup', function () {
   quickie.image.url = $(this).val();
-  save(quickie);
+  saveLocally(quickie);
   generateQuickie(quickie);
 });
 
-$('.editor button').on('click', function(e){
+$('.toolbar button').on('click', function(e){
   
   if ($(this).attr('data-target') != undefined){
     if ($(this).hasClass('is-active')){
       $(this).removeClass('is-active');
-      $('.editor').removeClass('open');  
+      $('.toolbar').removeClass('open');  
     } else {
-      $('.editor button').removeClass('is-active');  
+      $('.toolbar button').removeClass('is-active');  
       $(this).addClass('is-active');
-      $('.editor').addClass('open');  
+      $('.toolbar').addClass('open');  
 
       var target = $(this).data('target');
       $('.options > div').hide();
@@ -184,37 +235,24 @@ $('.editor button').on('click', function(e){
 });
 
 $('.fa-save').on('click', function(){
-  notify('Guardado', 2000);
-  save(quickie);
+  // notify('Guardado', 2000);
+  save(quickie, true);
 });
 
 $('.fa-download').on('click', function(){
-
-  loading();
   
-  save(quickie);
-
-  $.ajax({
-    type: "POST",
-    data: JSON.stringify(quickie),
-    url: "/save",
-    contentType: 'application/json; charset=utf-8',
-    crossDomain: true,
-    success: function(result){
-      // Adds the result to a hidden href and clicks it to automaticaly download
-      $('.result').attr('download', result[0].title).attr('href', result[0].link);
-    
-      // trigger the click
-      $('.result')[0].click();
-      
-      loading();
-    }, 
-    error: function(){
-      loading();
-      notify('Ocorreu um erro', 2000);
-    }
-  });
+  if (window.location.pathname.length > 1){
+    // Usally the id itself is the last text in the url. This reg ex gets the text after the last slash
+    var quickieId = window.location.pathname.match(/\/([^\/]+)\/?$/)[1];
+  } else {
+    var quickieId = save(quickie, false);
+    // var uniqueId = Math.random().toString(36).substr(2, 9);
+  }
+  
+  downloadQuickie(quickieId);
+  
 });
+
 
 $('#imageLoader').on('change', function (e) {
 
@@ -225,19 +263,8 @@ $('#imageLoader').on('change', function (e) {
       reader.onload = function (e) {
         var img = $('.bg');
         img.attr('src', e.target.result);
-        // img.appendTo($('.preview'));
-
           //update object
           quickie.image.url = e.target.result;
-
-          // if (img.get(0).complete)
-          //     ImageLoaded(img);
-          // else
-          //     img.on('load', function () {
-          //         ImageLoaded(img);
-          //     });
-
-          // _IMAGE_LOADED = 1;
       }
 
       reader.readAsDataURL(this.files[0]);
@@ -249,7 +276,7 @@ $('.upload').on('click', function () {
   $('#imageLoader').click();
 });
 
-$('.side-tools button').on('click', function(){
+$('.fa-code').on('click', function(){
   if ($(this).hasClass('fa-code')){
     $('.modal textarea').remove();
     $('<textarea rows="25">'+JSON.stringify(quickie, undefined, 4)+'</textarea>').appendTo($('.modal-body'));
@@ -261,28 +288,3 @@ $('.side-tools button').on('click', function(){
 $('.modal .modal-close').on('click', function(){
   $('.modal').hide();
 });
-
-// var initialSize = $(window).width();
-// var actualSize = initialSize;
-// var perc;
-
-// windowResize();
-
-// function windowResize(){
-//   // var initialSize = $(window).width();
-//   // var actualSize = initialSize;
-
-//   // on load
-//   perc = Math.floor(actualSize*100/initialSize) + '%';
-//   $(':root').css('--zoom-size', perc);
-
-
-//   //every time window resizes
-//   $(window).on('resize', function(){
-//       console.log('resized');
-//       actualSize = $(window).width();
-//       perc = Math.floor(actualSize*100/initialSize) + '%';
-
-//       $(':root').css('--zoom-size', perc);
-//   });
-// }

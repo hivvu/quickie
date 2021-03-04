@@ -1,0 +1,73 @@
+.toolbar {
+    background: rgba(0, 0, 0, 0.8);
+    color: #fff;
+    bottom: 0px;
+    position: absolute;
+    width: 100%;
+    padding: 30px 0 0;
+    text-align: center;
+    transition: transform 0.2s ease-in-out;
+    transform: translateY(50%);
+    z-index: 80;
+
+    .side-tools {
+        position: absolute;
+        top: -30px;
+        left: 20px;
+    }
+
+    .btn-secondary {
+        border-radius: 2px;
+        background: #fff;
+        color: #ccc;
+        padding: 6px 8px 5px;
+        display: inline-block;
+    }
+
+    //Temp
+    input[type="text"] {
+        width: 350px;
+        border-radius: 2px;
+    }
+
+    &.open {
+        transform: translateY(0);
+    }
+
+    button {
+        border: 0;
+        background: 0;
+        cursor: pointer;
+        color: #fff;
+        outline: none;
+        margin: 0 3px;
+        padding-bottom: 10px;
+        border-bottom: 4px solid transparent;
+
+        &:hover,
+        &.is-active {
+            border-bottom: 4px solid #fff;
+        }
+    }
+
+    .upload {
+        border: 1px solid #fff;
+        padding: 7px 10px 7px;
+        font-family: Verdana, sans-serif;
+    }
+
+    .options {
+        padding: 20px 0;
+        min-height: 70px;
+
+        & > div {
+            display: none;
+        }
+    }
+
+    label {
+        font-family: Verdana, sans-serif;
+        display: block;
+        margin-bottom: 5px;
+    }
+}
