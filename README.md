@@ -5,12 +5,13 @@ Generator tool for WASD.pt
 
 ```
 npm i
-npm run watch -or- gulp watch
+npm start -or- node server.js
+
 ```
 
 ### Gulp
 
-Default task is `$ gulp`, which will run all the following commands. Or, you can use them individually as needed.
+For CSS, the default task is `$ gulp`, which will run all the following commands. Or, you can use them individually as needed.
 
 ```
 $ gulp build:css // only processes Sass to CSS once
@@ -27,3 +28,5 @@ $ gulp build:dist // moves processed files from src/ to dist/
 - Post directly to Instagram from editor mode
 - Give more options to different layouts (Quote, VG Birthday, Giveaway)
 - Maybe a app version with Electron 
+- Archive page - DONE!
+- Zoom in & Zoom out in Editor - DONE! 
