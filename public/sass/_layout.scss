@@ -41,10 +41,8 @@ body {
         position: absolute;
         z-index: 0;
         display: block;
-        filter: saturate(calc(var(--saturation) * 100%)) 
-                contrast(var(--contrast)) 
-                brightness(var(--brightness))
-                blur(calc(var(--blur) * 1px));
+        // Error: $amount: calc(var(--saturation) * 100%) is not a number
+        // filter: saturate(calc(var(--saturation) * 100%)) contrast(var(--contrast)) brightness(var(--brightness)) blur(calc(var(--blur) * 1px));
     }
 
     .layers {
